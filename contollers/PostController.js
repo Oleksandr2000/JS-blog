@@ -115,7 +115,7 @@ export const getAll = async (req, res) => {
       .limit(limit)
       .populate('user')
       .exec();
-    res.json(posts, count);
+    res.json({ posts, count });
   } catch (err) {
     console.log(err);
     res.status(500).json({
