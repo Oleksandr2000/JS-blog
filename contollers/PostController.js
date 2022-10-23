@@ -40,7 +40,7 @@ export const getAll = async (req, res) => {
         .limit(limit)
         .populate('user')
         .exec();
-      return res.json(posts);
+      return res.json({ posts, count });
     }
 
     if (tag && user) {
@@ -50,7 +50,7 @@ export const getAll = async (req, res) => {
         .limit(limit)
         .populate('user')
         .exec();
-      return res.json(posts);
+      return res.json({ posts, count });
     }
 
     if (tag && searchString) {
@@ -63,7 +63,7 @@ export const getAll = async (req, res) => {
         .limit(limit)
         .populate('user')
         .exec();
-      return res.json(posts);
+      return res.json({ posts, count });
     }
 
     if (user && searchString) {
@@ -76,7 +76,7 @@ export const getAll = async (req, res) => {
         .limit(limit)
         .populate('user')
         .exec();
-      return res.json(posts);
+      return res.json({ posts, count });
     }
 
     if (tag) {
@@ -86,7 +86,7 @@ export const getAll = async (req, res) => {
         .limit(limit)
         .populate('user')
         .exec();
-      return res.json(posts);
+      return res.json({ posts, count });
     }
 
     if (user) {
@@ -96,7 +96,7 @@ export const getAll = async (req, res) => {
         .limit(limit)
         .populate('user')
         .exec();
-      return res.json(posts);
+      return res.json({ posts, count });
     }
 
     if (searchString) {
@@ -106,7 +106,7 @@ export const getAll = async (req, res) => {
         .limit(limit)
         .populate('user')
         .exec();
-      return res.json(posts);
+      return res.json({ posts, count });
     }
 
     const posts = await PostModel.find()
