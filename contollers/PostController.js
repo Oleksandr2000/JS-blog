@@ -25,14 +25,83 @@ export const getLastTags = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const { tag } = req.query;
+    const { tag, sort, user, searchString, page, limit } = req.query;
 
-    if (tag) {
-      const posts = await PostModel.find({ tags: tag }).populate('user').exec();
+    console.log(sort);
+
+    if (tag && user && searchString) {
+      const posts = await PostModel.find({
+        tags: tag,
+        user: user,
+        title: { $regex: '.*' + searchString + '.*' },
+      })
+        .sort([[sort, -1]])
+        .skip(page * limit - limit)
+        .limit(limit)
+        .populate('user')
+        .exec();
       return res.json(posts);
     }
 
-    const posts = await PostModel.find().populate('user').exec();
+    if (tag && user) {
+      const posts = await PostModel.find({ tags: tag, user: user })
+        .sort([[sort, -1]])
+        .skip(page * limit - limit)
+        .limit(limit)
+        .populate('user')
+        .exec();
+      return res.json(posts);
+    }
+
+    if (tag && searchString) {
+      const posts = await PostModel.find({
+        tags: tag,
+        title: { $regex: '.*' + searchString + '.*' },
+      })
+        .sort([[sort, -1]])
+        .skip(page * limit - limit)
+        .limit(limit)
+        .populate('user')
+        .exec();
+      return res.json(posts);
+    }
+
+    if (tag) {
+      const posts = await PostModel.find({ tags: tag })
+        .sort([[sort, -1]])
+        .skip(page * limit - limit)
+        .limit(limit)
+        .populate('user')
+        .exec();
+      return res.json(posts);
+    }
+
+    if (user) {
+      const posts = await PostModel.find({ user: user })
+        .sort([[sort, -1]])
+        .skip(page * limit - limit)
+        .limit(limit)
+        .populate('user')
+        .exec();
+      return res.json(posts);
+    }
+
+    if (searchString) {
+      const posts = await PostModel.find({ title: { $regex: '.*' + searchString + '.*' } })
+        .sort([[sort, -1]])
+        .skip(page * limit - limit)
+        .limit(limit)
+        .populate('user')
+        .exec();
+      return res.json(posts);
+    }
+
+    const posts = await PostModel.find()
+      .sort([[sort, -1]])
+      .skip(page * limit - limit)
+      .limit(limit)
+      .populate('user')
+      .exec();
     res.json(posts);
   } catch (err) {
     console.log(err);
