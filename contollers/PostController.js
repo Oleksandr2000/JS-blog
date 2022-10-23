@@ -27,7 +27,7 @@ export const getAll = async (req, res) => {
   try {
     const { tag, sort, user, searchString, page, limit } = req.query;
 
-    console.log(sort);
+    const count = await PostModel.count();
 
     if (tag && user && searchString) {
       const posts = await PostModel.find({
@@ -115,7 +115,7 @@ export const getAll = async (req, res) => {
       .limit(limit)
       .populate('user')
       .exec();
-    res.json(posts);
+    res.json(posts, count);
   } catch (err) {
     console.log(err);
     res.status(500).json({
