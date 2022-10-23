@@ -66,6 +66,19 @@ export const getAll = async (req, res) => {
       return res.json(posts);
     }
 
+    if (user && searchString) {
+      const posts = await PostModel.find({
+        user: user,
+        title: { $regex: '.*' + searchString + '.*' },
+      })
+        .sort([[sort, -1]])
+        .skip(page * limit - limit)
+        .limit(limit)
+        .populate('user')
+        .exec();
+      return res.json(posts);
+    }
+
     if (tag) {
       const posts = await PostModel.find({ tags: tag })
         .sort([[sort, -1]])
