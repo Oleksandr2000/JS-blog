@@ -27,9 +27,15 @@ export const getAll = async (req, res) => {
   try {
     const { tag, sort, user, searchString, page, limit } = req.query;
 
-    const count = await PostModel.count();
+    let count;
 
     if (tag && user && searchString) {
+      count = await PostModel.count({
+        tags: tag,
+        user: user,
+        title: { $regex: '.*' + searchString + '.*' },
+      });
+
       const posts = await PostModel.find({
         tags: tag,
         user: user,
@@ -44,6 +50,11 @@ export const getAll = async (req, res) => {
     }
 
     if (tag && user) {
+      count = await PostModel.count({
+        tags: tag,
+        user: user,
+      });
+
       const posts = await PostModel.find({ tags: tag, user: user })
         .sort([[sort, -1]])
         .skip(page * limit - limit)
@@ -54,6 +65,11 @@ export const getAll = async (req, res) => {
     }
 
     if (tag && searchString) {
+      count = await PostModel.count({
+        tags: tag,
+        title: { $regex: '.*' + searchString + '.*' },
+      });
+
       const posts = await PostModel.find({
         tags: tag,
         title: { $regex: '.*' + searchString + '.*' },
@@ -67,6 +83,11 @@ export const getAll = async (req, res) => {
     }
 
     if (user && searchString) {
+      count = await PostModel.count({
+        user: user,
+        title: { $regex: '.*' + searchString + '.*' },
+      });
+
       const posts = await PostModel.find({
         user: user,
         title: { $regex: '.*' + searchString + '.*' },
@@ -80,6 +101,10 @@ export const getAll = async (req, res) => {
     }
 
     if (tag) {
+      count = await PostModel.count({
+        tags: tag,
+      });
+
       const posts = await PostModel.find({ tags: tag })
         .sort([[sort, -1]])
         .skip(page * limit - limit)
@@ -90,6 +115,10 @@ export const getAll = async (req, res) => {
     }
 
     if (user) {
+      count = await PostModel.count({
+        user: user,
+      });
+
       const posts = await PostModel.find({ user: user })
         .sort([[sort, -1]])
         .skip(page * limit - limit)
@@ -100,6 +129,10 @@ export const getAll = async (req, res) => {
     }
 
     if (searchString) {
+      count = await PostModel.count({
+        title: { $regex: '.*' + searchString + '.*' },
+      });
+
       const posts = await PostModel.find({ title: { $regex: '.*' + searchString + '.*' } })
         .sort([[sort, -1]])
         .skip(page * limit - limit)
@@ -108,6 +141,8 @@ export const getAll = async (req, res) => {
         .exec();
       return res.json({ posts, count });
     }
+
+    count = await PostModel.count();
 
     const posts = await PostModel.find()
       .sort([[sort, -1]])
